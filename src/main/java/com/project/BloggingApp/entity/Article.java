@@ -20,7 +20,7 @@ public class Article {
     @Id
     private ObjectId id;
     @NonNull
-    private String tile;
+    private String title;
     @NonNull
     @Indexed(unique = true)
     private String slug;

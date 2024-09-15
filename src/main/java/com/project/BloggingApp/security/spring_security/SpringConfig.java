@@ -5,8 +5,10 @@ import com.project.BloggingApp.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,7 +31,8 @@ public class SpringConfig {
         return http.authorizeHttpRequests(request -> request
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/users/**").authenticated()
-                .requestMatchers("/article/**").authenticated()
+                .requestMatchers("/articles/**").authenticated()
+                .requestMatchers("/swagger-ui/**").permitAll()
         ).csrf(AbstractHttpConfigurer::disable)
          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
          .build();
@@ -43,7 +46,13 @@ public class SpringConfig {
         return daoAuthenticationProvider;
     }
 
+    @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
+        return auth.getAuthenticationManager();
     }
 }

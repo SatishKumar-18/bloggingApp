@@ -6,6 +6,7 @@ import com.project.BloggingApp.repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,15 +19,23 @@ public class ArticleService {
     @Autowired
     private UserService userService;
 
+    @Transactional
     public void createArticle(Article article, String username){
        try{
-           User user = userService.getUser(username);
+           boolean validArticle = !article.getTitle().isEmpty() && !article.getContent().isEmpty() && !article.getSlug().isEmpty();
+           if(validArticle){
+               User user = userService.getUser(username);
 
-           article.setPublishedDate(LocalDateTime.now());
-           article.setAuthor(username);
+               article.setPublishedDate(LocalDateTime.now());
+               article.setAuthor(username);
 
-           user.getArticle().add(article);
-           articleRepo.save(article);
+               Article savedArticle = articleRepo.save(article);
+
+               user.getArticle().add(savedArticle);
+               userService.save(user);
+           }else{
+               throw new RuntimeException("Invalid article data");
+           }
        }catch (Exception e){
            log.error("Exception occurred while saving article ", e);
        }
@@ -48,7 +57,7 @@ public class ArticleService {
         return articleRepo.findAll();
     }
 
-    public Boolean deleteArticle(String slug, String username){
+    public void deleteArticle(String slug, String username){
         boolean deleted = false;
         try{
             User user = userService.getUser(username);
@@ -60,11 +69,9 @@ public class ArticleService {
                 articleRepo.delete(article);
                 userService.save(user);
             }
-            return deleted;
         } catch (Exception e){
             log.error("Exception ", e);
             throw new RuntimeException("An error occurred while deleting article");
         }
-
     }
 }
