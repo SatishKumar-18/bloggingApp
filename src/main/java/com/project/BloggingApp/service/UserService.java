@@ -3,6 +3,8 @@ package com.project.BloggingApp.service;
 import com.project.BloggingApp.entity.User;
 import com.project.BloggingApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,12 +12,19 @@ public class UserService {
     @Autowired
     private UserRepository userRepo;
 
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public Boolean createUser(User user){
-        if(!user.getUsername().isEmpty() && !user.getPassword().isEmpty()){
-            userRepo.save(user);
-            return true;
+        try{
+            if(!user.getUsername().isEmpty() && !user.getPassword().isEmpty()){
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                userRepo.save(user);
+                return true;
+            }
+            return false;
+        } catch (Exception e){
+            return false;
         }
-        return false;
     }
 
     public void save(User user){
