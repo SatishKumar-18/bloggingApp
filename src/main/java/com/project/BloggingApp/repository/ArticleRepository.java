@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArticleRepository extends MongoRepository<Article, ObjectId> {
+
+    Article findBySlug(String title);
 }
