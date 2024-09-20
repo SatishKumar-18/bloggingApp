@@ -27,7 +27,6 @@ public class User {
     @NonNull
     private String password;
     private String bio;
-    private String image;
 
     @DBRef
     private List<Article> article = new ArrayList<>();

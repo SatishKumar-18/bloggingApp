@@ -1,8 +1,10 @@
 package com.project.BloggingApp.controller;
 
+import com.project.BloggingApp.dto.user_dto.UpdateUserDTO;
 import com.project.BloggingApp.entity.User;
 import com.project.BloggingApp.service.ArticleService;
 import com.project.BloggingApp.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "User APIs", description = "Update, search, view profile and delete user")
 public class UserController {
 
     @Autowired
@@ -20,17 +23,17 @@ public class UserController {
     private ArticleService articleService;
 
     @PutMapping("/update-profile")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUserDTO updateUserDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User existingUser = userService.getUser(username);
-        existingUser.setUsername(user.getUsername());
-        existingUser.setPassword(user.getPassword());
 
-        userService.createUser(existingUser);
+        User updatedUser = userService.updateUser(updateUserDTO, username);
+        if(updatedUser != null){
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
 
-        return new ResponseEntity<>(existingUser, HttpStatus.OK);
+       return new ResponseEntity<>("Error", HttpStatus.EXPECTATION_FAILED);
     }
 
     @GetMapping("/search/{username}")

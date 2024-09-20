@@ -1,4 +1,4 @@
-package com.project.BloggingApp.security.jwt;
+package com.project.BloggingApp.config.security_config.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

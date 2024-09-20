@@ -1,4 +1,4 @@
-package com.project.BloggingApp.security.jwt;
+package com.project.BloggingApp.config.security_config.jwt;
 
 import com.project.BloggingApp.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;

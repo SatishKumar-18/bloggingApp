@@ -1,6 +1,6 @@
-package com.project.BloggingApp.security.spring_security;
+package com.project.BloggingApp.config.security_config.spring_security;
 
-import com.project.BloggingApp.security.jwt.JwtFilter;
+import com.project.BloggingApp.config.security_config.jwt.JwtFilter;
 import com.project.BloggingApp.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,12 +32,13 @@ public class SpringConfig {
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/users/**").authenticated()
                 .requestMatchers("/articles/**").authenticated()
-                .requestMatchers("/swagger-ui/**").permitAll()
+                .anyRequest().permitAll()
         ).csrf(AbstractHttpConfigurer::disable)
          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
          .build();
     }
 
+    @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);

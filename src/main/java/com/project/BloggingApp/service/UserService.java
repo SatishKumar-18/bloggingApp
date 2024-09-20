@@ -1,15 +1,16 @@
 package com.project.BloggingApp.service;
 
+import com.project.BloggingApp.dto.user_dto.UpdateUserDTO;
+import com.project.BloggingApp.dto.user_dto.UserDTO;
 import com.project.BloggingApp.entity.Article;
 import com.project.BloggingApp.entity.User;
 import com.project.BloggingApp.repository.ArticleRepository;
 import com.project.BloggingApp.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserService {
@@ -19,17 +20,38 @@ public class UserService {
     private ArticleRepository articleRepo;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final ModelMapper modelMapper;
 
-    public Boolean createUser(User user){
+
+    public UserService(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
+
+    public User createUser(UserDTO userDTO){
         try{
-            if(!user.getUsername().isEmpty() && !user.getPassword().isEmpty()){
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                userRepo.save(user);
-                return true;
+            if(!userDTO.getUsername().isEmpty() && !userDTO.getPassword().isEmpty()){
+                User user = modelMapper.map(userDTO, User.class);
+                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                return userRepo.save(user);
             }
-            return false;
+            return null;
         } catch (Exception e){
-            return false;
+            return null;
+        }
+    }
+
+    public User updateUser(UpdateUserDTO updateUserDTO, String username){
+        try{
+            User existingUser = getUser(username);
+
+            existingUser.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+            existingUser.setBio(updateUserDTO.getBio());
+            existingUser.setEmail(updateUserDTO.getEmail());
+
+            return userRepo.save(existingUser);
+
+        } catch (Exception e){
+            return null;
         }
     }
 

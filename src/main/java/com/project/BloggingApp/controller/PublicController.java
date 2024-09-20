@@ -1,8 +1,10 @@
 package com.project.BloggingApp.controller;
 
+import com.project.BloggingApp.dto.user_dto.LoginDTO;
+import com.project.BloggingApp.dto.user_dto.UserDTO;
 import com.project.BloggingApp.entity.Article;
 import com.project.BloggingApp.entity.User;
-import com.project.BloggingApp.security.jwt.JwtUtils;
+import com.project.BloggingApp.config.security_config.jwt.JwtUtils;
 import com.project.BloggingApp.service.ArticleService;
 import com.project.BloggingApp.service.UserDetailsServiceImpl;
 import com.project.BloggingApp.service.UserService;
@@ -39,11 +41,11 @@ public class PublicController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody User user){
-        if(user != null){
-            boolean saved  = userService.createUser(user);
+    public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO){
+        if(userDTO != null){
+            User user  = userService.createUser(userDTO);
 
-            if(saved){
+            if(user != null){
                 return ResponseEntity.ok(user);
             }
         }
@@ -52,13 +54,14 @@ public class PublicController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user){
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO){
         try{
+
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
             );
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getUsername());
             String jwt = jwtUtils.generateToken(userDetails.getUsername());
 
             return new ResponseEntity<>(jwt, HttpStatus.OK);
@@ -68,10 +71,4 @@ public class PublicController {
         }
     }
 
-    @GetMapping("/all-articles")
-    public ResponseEntity<List<Article>> getArticleByUsername(){
-        List<Article> articles = articleService.getAllArticle();
-
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
 }
