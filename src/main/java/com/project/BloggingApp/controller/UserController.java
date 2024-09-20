@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
-@Tag(name = "User APIs", description = "Update, search, view profile and delete user")
+@Tag(name = "User APIs", description = "(Authenticated) Update, search, view profile and delete user")
 public class UserController {
 
     @Autowired

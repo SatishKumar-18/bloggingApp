@@ -8,6 +8,7 @@ import com.project.BloggingApp.config.security_config.jwt.JwtUtils;
 import com.project.BloggingApp.service.ArticleService;
 import com.project.BloggingApp.service.UserDetailsServiceImpl;
 import com.project.BloggingApp.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/public")
 @Slf4j
+@Tag(name = "Public APIs", description = "Not Authenticated")
 public class PublicController {
 
     @Autowired
