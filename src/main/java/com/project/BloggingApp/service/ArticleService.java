@@ -4,6 +4,7 @@ import com.project.BloggingApp.dto.article_dto.ArticleDTO;
 import com.project.BloggingApp.entity.Article;
 import com.project.BloggingApp.entity.User;
 import com.project.BloggingApp.repository.ArticleRepository;
+import com.project.BloggingApp.repository.CommentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @Slf4j
@@ -27,6 +27,9 @@ public class ArticleService {
     public ArticleService(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
+
+    @Autowired
+    private CommentRepository commentRepo;
 
     @Transactional
     public Article createArticle(ArticleDTO articleDTO, String username){
@@ -50,7 +53,7 @@ public class ArticleService {
        }
     }
 
-    public Article saveArticle(ObjectId id, ArticleDTO articleDTO){
+    public Article updateArticle(ObjectId id, ArticleDTO articleDTO){
         try{
             Article oldArticle = articleRepo.findById(id).orElseThrow();
 
@@ -69,8 +72,16 @@ public class ArticleService {
         }
     }
 
+    public void saveArticle(Article article){
+        articleRepo.save(article);
+    }
+
     public Article getArticleByTitle(String title){
         return articleRepo.findByTitle(title);
+    }
+
+    public Article getArticleBySlug(String slug){
+        return articleRepo.findBySlug(slug);
     }
 
     public List<Article> getAllArticle(){
@@ -82,19 +93,21 @@ public class ArticleService {
         return articleRepo.findAll().stream().filter(article -> article.getAuthor().equals(author)).toList();
     }
 
-    public void deleteArticle(String title, String username){
+    public Boolean deleteArticle(String title, String username){
         boolean deleted = false;
         try{
             User user = userService.getUser(username);
             Article article = articleRepo.findByTitle(title);
 
-            deleted = user.getArticle().removeIf(x -> x.getSlug().equals(title));
+            deleted = user.getArticle().removeIf(x -> x.getTitle().equals(title));
 
 
             if(deleted){
+                commentRepo.deleteAll();
                 articleRepo.delete(article);
                 userService.save(user);
             }
+            return deleted;
         } catch (Exception e){
             log.error("Exception ", e);
             throw new RuntimeException("An error occurred while deleting article");

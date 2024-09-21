@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface ArticleRepository extends MongoRepository<Article, ObjectId> {
 
     Article findByTitle(String title);
+    Article findBySlug(String slug);
     void deleteByAuthor(String author);
 }

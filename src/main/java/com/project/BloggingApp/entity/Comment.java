@@ -16,7 +16,7 @@ public class Comment {
     @Id
     private ObjectId id;
     @NonNull
-    private String username;
-    private String content;
+    private String user;
+    private String comments;
     private LocalDateTime commentTime;
 }

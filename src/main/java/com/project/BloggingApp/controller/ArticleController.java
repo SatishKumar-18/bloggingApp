@@ -72,7 +72,7 @@ public class ArticleController {
         List<Article> list = user.getArticle().stream().filter(article -> article.getId().equals(id)).toList();
 
         if(!list.isEmpty()){
-            Article article = articleService.saveArticle(id, articleDTO);
+            Article article = articleService.updateArticle(id, articleDTO);
             if(article != null){
                 return new ResponseEntity<>(article, HttpStatus.OK);
             }
@@ -86,9 +86,12 @@ public class ArticleController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        articleService.deleteArticle(title, username);
+        Boolean deleted = articleService.deleteArticle(title, username);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        if(deleted){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }
