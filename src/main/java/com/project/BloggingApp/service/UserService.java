@@ -22,17 +22,20 @@ public class UserService {
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final ModelMapper modelMapper;
 
-
     public UserService(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
+    @Autowired
+    private MailService mailService;
 
     public User createUser(UserDTO userDTO){
         try{
             if(!userDTO.getUsername().isEmpty() && !userDTO.getPassword().isEmpty()){
                 User user = modelMapper.map(userDTO, User.class);
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-                return userRepo.save(user);
+                User save = userRepo.save(user);
+                mailService.sendEmail(user.getEmail(), "Blogging App account created", "Thank you for choosing Blogging App to post your blogs");
+                return save;
             }
             return null;
         } catch (Exception e){
