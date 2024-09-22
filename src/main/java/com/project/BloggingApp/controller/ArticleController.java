@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/articles")
-@Tag(name = "Article APIs", description = "(Authenticated) Create, update and delete article")
+@Tag(name = "Article APIs")
 public class ArticleController {
 
     @Autowired

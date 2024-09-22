@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/articles/{article-slug}/comments")
-@Tag(name = "Comment APIs", description = "(Authenticated) Add and delete comments")
+@Tag(name = "Comment APIs")
 public class CommentController {
 
     @Autowired

@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/public")
 @Slf4j
-@Tag(name = "Public APIs", description = "Not Authenticated")
+@Tag(name = "Public APIs")
 public class PublicController {
 
     @Autowired
