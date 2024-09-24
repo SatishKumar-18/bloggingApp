@@ -14,10 +14,11 @@ import java.util.Map;
 @Component
 public class JwtUtils {
 
+    @Value("${auth.jwt.secretKey}")
+    private String SECRET_KEY;
 
-    private String SECRET_KEY = "ac3ca7f1d215cd41903646c838311448798e0cb56bb4674bd2eafad40b3a83ec";
-
-    private int EXPIRY_TIME = 3600000;
+    @Value("${auth.jwt.expirationTime}")
+    private int EXPIRY_TIME;
 
     private SecretKey getSigningKey(){
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
